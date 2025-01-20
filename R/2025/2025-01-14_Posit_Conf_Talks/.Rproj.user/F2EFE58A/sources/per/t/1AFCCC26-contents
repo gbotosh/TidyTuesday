@@ -1,0 +1,163 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+# Load Packages
+if(!require("pacman")) install.packages(("pacman"))
+pacman::p_load(tidyverse, here, ggthemes, scales, patchwork, ggtext, ggrepel, tidytext, ggwordcloud, ggbump)
+
+
+
+```
+
+```{r}
+# Load Data
+conf2023 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-14/conf2023.csv')
+conf2024 <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-14/conf2024.csv')
+
+```
+
+```{r}
+write.csv(conf2023, "data/conf2023.csv")
+write.csv(conf2024, "data/conf2024.csv")
+```
+
+
+```{r}
+df_conf_2023 <- conf2023 |> 
+  mutate(conf_year = 2023) |>  
+  select(session_title, session_abstract, conf_year) |> 
+  rename( talk_title = session_title, description = session_abstract)
+
+df_conf_2024 <- conf2024 |> 
+  mutate(conf_year = 2024)|> 
+  select(talk_title, description, conf_year)
+
+combined_data <- bind_rows(df_conf_2023, df_conf_2024)
+
+
+```
+
+
+```{r}
+# Text preprocessing
+keywords_df <- combined_data |> 
+  mutate(combined_text = paste(talk_title, description, sep = " ")) |> 
+  unnest_tokens(word, combined_text) |> 
+  anti_join(stop_words) |> 
+  count(word, conf_year, sort = TRUE)
+```
+```{r}
+# Filter common keywords
+common_keywords <- keywords_df %>%
+  group_by(word) %>%
+  filter(n_distinct(conf_year) > 1) %>%
+  ungroup()
+
+
+```
+
+
+
+```{r}
+common_keywords |> 
+  filter(n > 10) |> 
+  ggplot(aes(label = word, size = n)) +
+  geom_text_wordcloud() +
+  theme_minimal() +
+  facet_wrap(~conf_year)
+```
+
+```{r}
+# Word Cloud
+common_keywords |> 
+  ggwordcloud(aes(label = word, size = n), color = "darkblue") +
+  theme_minimal()
+
+
+```
+
+
+
+```{r}
+# Bump Chart
+ranked_keywords <- common_keywords |> 
+  group_by(conf_year) |> 
+  mutate(Rank = rank(-n)) |> 
+  ungroup()
+
+
+```
+
+
+```{r}
+ggplot(ranked_keywords, aes(x = conf_year, y = Rank, color = word, group = word)) +
+  geom_bump(size = 1.5) +
+  geom_point(size = 3) +
+  theme_minimal() +
+  ggtitle("Keyword Trends Across Years") +
+  scale_y_reverse()
+```
+
+```{r}
+library(ggwordcloud)
+library(ggplot2)
+#install.packages("showtext")
+library(showtext)
+
+# Enable showtext
+showtext_auto()
+
+# Add Roboto font
+font_add_google("Roboto", "roboto")
+#theme(text = element_text(family = "roboto")
+
+# Refined word cloud
+common_keywords |> 
+  filter(n > 10) |> 
+  ggplot(aes(label = word, size = n, color = n)) + # Map `n` to `color` for visual emphasis
+  geom_text_wordcloud(
+    family = "Roboto", # Custom font (requires the font to be installed)
+    shape = "circle",  # Use a circular layout for the words
+    max_steps = 1000,  # Higher resolution for better word placement
+    max_overlap = 0.5  # Reduce overlap of words
+  ) +
+  scale_size_area(max_size = 12) + # Adjust maximum word size
+  scale_color_gradient(low = "blue", high = "red") + # Smooth gradient for color
+  theme_minimal() + # Clean minimalistic theme
+  facet_wrap(~conf_year, ncol = 1) + # Stack the facets vertically for better comparison
+  labs(
+    title = "Common Keywords in Conference Tracks (Filtered by Year)",
+    subtitle = "Keywords with more than 10 occurrences",
+    caption = "Source: TidyTuesday | Visualization: Your Name",
+    x = NULL,
+    y = NULL
+  ) +
+  theme(
+    plot.title = element_text(size = 18, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    strip.text = element_text(size = 12, face = "bold"),
+    plot.caption = element_text(size = 10, color = "grey50"),
+    panel.spacing = unit(1, "lines"), # Add space between facets,
+    text = element_text(family = "Roboto")
+  )
+
+```
+
+```{r}
+
+
+install.packages("extrafont")
+library(extrafont)
+font_import(prompt = FALSE)  # Scans for fonts on your system
+loadfonts(device = "win")
+fonts()
+```
+```{r}
+library(extrafont)
+fonts()
+```
+
