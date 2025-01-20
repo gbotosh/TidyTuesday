@@ -68,7 +68,7 @@ keywords_df <- combined_data |>
 ```{r}
 # Word cloud plot
 keywords_df |> 
-  filter(n > 10) |> 
+  filter(n > 5) |> 
   ggplot(aes(label = word, size = n, color = n)) + # Map `n` to `color` for visual emphasis
   geom_text_wordcloud(
     shape = "circle",  # Use a circular layout for the words
@@ -80,7 +80,7 @@ keywords_df |>
   facet_wrap(~conf_year, ncol = 1) + # Stack the facets vertically for better comparison
   labs(
     title = "Frequent Keywords in POSIT Conference Tracks (Filtered by Year)",
-    subtitle = "Keywords with more than 10 occurrences",
+    subtitle = "Keywords with more than 5 occurrences",
     caption = "Source: TidyTuesday | Visualization: Olaoluwa Gbotoso",
     x = NULL,
     y = NULL
@@ -94,7 +94,7 @@ keywords_df |>
     plot.background = element_rect(fill = "white", color = NA)
   )
 
-# Save plot with larger dimensions
+# Save plot 
 ggsave(here("wordcloud_plot_2025_01_14.png"))  
 ```
 
