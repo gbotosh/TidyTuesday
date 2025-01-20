@@ -1,0 +1,4 @@
+"0",""
+"0","# Save plot "
+"0","ggsave(here(""wordcloud_plot_2025_01_14.png""))  "
+"2","[38;5;232mSaving 6.76 x 4.17 in image[39m"

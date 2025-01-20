@@ -74,7 +74,7 @@ keywords_df |>
     shape = "circle",  # Use a circular layout for the words
     max_steps = 1000 # Higher resolution for better word placement
   ) +
-  scale_size_area(max_size = 12) + # Adjust maximum word size
+  scale_size_area(max_size = 18) + # Adjust maximum word size
   scale_color_gradient(low = "blue", high = "red") + # Smooth gradient for color
   theme_minimal() + 
   facet_wrap(~conf_year, ncol = 1) + # Stack the facets vertically for better comparison
@@ -86,10 +86,10 @@ keywords_df |>
     y = NULL
   ) +
   theme(
-    plot.title = element_text(size = 18, face = "bold"),
-    plot.subtitle = element_text(size = 14),
-    strip.text = element_text(size = 12, face = "bold"),
-    plot.caption = element_text(size = 14, color = "grey50"),
+    plot.title = element_text(size = 24, face = "bold"),
+    plot.subtitle = element_text(size = 20),
+    strip.text = element_text(size = 18, face = "bold"),
+    plot.caption = element_text(size = 20, color = "grey50"),
     panel.spacing = unit(1, "lines"), # Add space between facets
     plot.background = element_rect(fill = "white", color = NA)
   )

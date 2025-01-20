@@ -3,7 +3,7 @@
     "path": "~/GitHub/TidyTuesday/R/2025/2025-01-14_Posit_Conf_Talks/2025-01-14_Posit_Conf_Talks.qmd",
     "project_path": "2025-01-14_Posit_Conf_Talks.qmd",
     "type": "quarto_markdown",
-    "hash": "2952917187",
+    "hash": "634849891",
     "contents": "",
     "dirty": false,
     "created": 1736974516766.0,
@@ -15,8 +15,8 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "96,12",
-        "scrollLine": "87",
+        "cursorPosition": "90,39",
+        "scrollLine": "75",
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
         "rmdVisualModeLocation": "2:0",
@@ -27,7 +27,7 @@
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1737347626258,
+    "last_content_update": 1737351466571,
     "read_only": false,
     "read_only_alternatives": []
 }
