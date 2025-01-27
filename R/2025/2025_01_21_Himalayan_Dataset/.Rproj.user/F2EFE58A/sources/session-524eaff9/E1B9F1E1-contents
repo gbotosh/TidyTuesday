@@ -1,0 +1,168 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r}
+# Load required packages
+if(!require("pacman")) install.packages(("pacman"))
+pacman::p_load(tidyverse, here, ggstatsplot, ggalluvial)
+
+```
+
+
+```{r}
+# Load dataset
+exped_tidy <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-21/exped_tidy.csv')
+peaks_tidy <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-01-21/peaks_tidy.csv')
+
+```
+
+
+```{r}
+write.csv(exped_tidy, "data/exped_tidy.csv")
+write.csv(peaks_tidy, "data/peaks_tidy.csv")
+```
+
+
+
+
+
+
+```{r}
+
+# Create a new dataset with the success rate calculation
+mountaineering_data <- exped_tidy %>%
+  mutate(
+    success_rate = SMTMEMBERS / TOTMEMBERS * 100,   # Calculate success rate
+    oxygen_usage = ifelse(O2USED, "Used Oxygen", "No Oxygen")  # Label for oxygen use
+  ) %>%
+  filter(!is.na(success_rate) & TOTMEMBERS > 0)  # Filter valid rows
+
+# Create the boxplot
+# ggplot(mountaineering_data, aes(x = oxygen_usage, y = success_rate, fill = oxygen_usage)) +
+#   geom_boxplot(outlier.shape = 21, outlier.color = "black", outlier.size = 2, alpha = 0.7) +
+#   scale_fill_manual(values = c("Used Oxygen" = "#1f78b4", "No Oxygen" = "#33a02c")) +
+#   labs(
+#     title = "Impact of Supplemental Oxygen on Summit Success Rates",
+#     x = "Oxygen Usage",
+#     y = "Success Rate (%)",
+#     fill = "Oxygen Usage"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     legend.position = "none",
+#     plot.title = element_text(hjust = 0.5, face = "bold"),
+#     axis.title.x = element_text(face = "bold"),
+#     axis.title.y = element_text(face = "bold")
+#   )
+
+
+```
+
+
+```{r}
+# Prepare the data for the Sankey diagram
+# sankey_data <- mountaineering_data %>%
+#   mutate(
+#     oxygen_usage = ifelse(O2USED, "Used Oxygen", "No Oxygen"),  # Label for oxygen usage
+#     success_status = ifelse(SMTMEMBERS > 0, "Success", "Failure")  # Label success or failure
+#   ) %>%
+#   group_by(oxygen_usage, success_status) %>%
+#   summarise(count = n(), .groups = "drop")  # Count combinations
+# 
+# # Create the Sankey diagram
+# ggplot(sankey_data,
+#        aes(axis1 = oxygen_usage, axis2 = success_status, y = count)) +
+#   geom_alluvium(aes(fill = oxygen_usage), width = 1/12) +
+#   geom_stratum(width = 1/6, fill = "gray70", color = "black") +
+#   geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+#   scale_fill_manual(values = c("Used Oxygen" = "#1f78b4", "No Oxygen" = "#33a02c")) +
+#   labs(
+#     title = "Flow of Oxygen Usage to Summit Outcomes",
+#     x = "",
+#     y = "Expedition Count"
+#   ) +
+#   theme_minimal(base_size = 14) +
+#   theme(
+#     plot.title = element_text(hjust = 0.5, face = "bold"),
+#     axis.text.y = element_blank(),
+#     axis.title.y = element_text(face = "bold"),
+#     panel.grid = element_blank()
+#   )
+
+
+```
+
+
+
+```{r}
+
+plt <- ggbetweenstats(
+  data = mountaineering_data,
+  x = oxygen_usage,
+  y = success_rate
+)
+```
+
+
+```{r}
+plt <- plt + 
+  # Add labels and title
+  labs(
+    title = "Impact of Supplemental Oxygen on Summit Success Rates",
+    x = "Oxygen Usage",
+    y = "Success Rate (%)",
+    caption = "Source: TidyTuesday | Visualization: Olaoluwa Gbotoso"
+  ) + 
+  # Customizations
+  theme(
+    # This is the new default font in the plot
+    text = element_text(size = 8, color = "black"),
+    plot.title = element_text(
+      size = 20,
+      face = "bold",
+      color = "#2a475e"
+    ),
+    plot.caption = element_text(size = 12, color = "grey50"),
+    plot.title.position = "plot", # slightly different from default
+    axis.text = element_text(size = 10, color = "black"),
+    axis.title = element_text(size = 12)
+  )
+
+```
+
+
+```{r}
+# 1. Remove axis ticks
+# 2. Change default color of the axis lines with a lighter one
+# 3. Remove most reference lines, only keep the major horizontal ones.
+#    This reduces clutter, while keeping the reference for the variable
+#    being compared.
+# 4. Set the panel and the background fill to the same light color.
+
+plt <- plt  +
+  theme(
+    axis.ticks = element_blank(),
+    axis.line = element_line(colour = "grey50"),
+    panel.grid = element_line(color = "#b4aea9"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linetype = "dashed"),
+    panel.background = element_rect(fill = "#fbf9f4", color = "#fbf9f4"),
+    plot.background = element_rect(fill = "#fbf9f4", color = "#fbf9f4")
+  )
+```
+
+
+
+
+```{r}
+ggsave( "boxplot_violin_plot_2025_01_21.png",
+  width = 10,
+  height = 8,
+)
+
+```
+

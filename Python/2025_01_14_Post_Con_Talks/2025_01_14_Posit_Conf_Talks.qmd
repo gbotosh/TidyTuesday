@@ -1,0 +1,11 @@
+---
+title: "POSIT Conference Talks (TidyTuesday WEEK 02, 2025)"
+author: "Olaoluwa Gbotoso"
+date: "2025-01-20"
+format: html 
+---
+
+
+```{python}
+import pandas as pd
+```

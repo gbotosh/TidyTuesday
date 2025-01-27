@@ -1,0 +1,6 @@
+"0",""
+"0","plt <- ggbetweenstats("
+"0","  data = mountaineering_data,"
+"0","  x = oxygen_usage,"
+"0","  y = success_rate"
+"0",")"
